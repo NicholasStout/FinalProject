@@ -11,23 +11,24 @@ library(tidyverse)
 library(lubridate)
 ks_data = read.csv("ks-projects-201801.csv")
 ```
+#Authors
+Nicholas Stout, Daniel Tacconi, Issac Nellans
 
-## R Markdown
+#Proposal
+We would like to explore this data to find what effects if a Kickstarter succeeds, looking at amount of time to pledge, the goal amount, and how it is effected by the category.
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+#Marginal Distributions
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+```{r}
+ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ") %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
+str(ks_data)
 
-```{r cars}
-summary(cars)
 ```
 
-## Including Plots
+#Visual summary
 
-You can also embed plots, for example:
+#Expanding complexity
 
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r}
+
 ```
-
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
