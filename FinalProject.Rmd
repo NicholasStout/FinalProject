@@ -18,12 +18,26 @@ Nicholas Stout, Daniel Tacconi, Issac Nellans
 We would like to explore this data to find what effects if a Kickstarter succeeds, looking at amount of time to pledge, the goal amount, and how it is effected by the category.
 
 #Marginal Distributions
-
+First, correction of the date/time variable Launched:
 ```{r}
 ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ") %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
-str(ks_data)
-
 ```
+##"ID"               
+##"name"             
+##"category"        
+##"main_category"    
+##"currency"         
+##"deadline"        
+##"goal"
+##"launch_date"
+##"launch_time"     
+##"pledged"
+##"state"
+##"backers"         
+##"country"
+##"usd.pledged""
+##"usd_pledged_real"
+##"usd_goal_real"
 
 #Visual summary
 
