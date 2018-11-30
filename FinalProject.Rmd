@@ -20,10 +20,8 @@ We would like to explore this data to find what effects if a Kickstarter succeed
 #Marginal Distributions
 First, correction of the date/time variable Launched:
 ```{r}
-ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ") %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
+ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ")# %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
 ```
-##"ID"               
-##"name"             
 ##"category"        
 ##"main_category"    
 ##"currency"         
@@ -38,8 +36,6 @@ ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), s
 ##"usd.pledged""
 ##"usd_pledged_real"
 ##"usd_goal_real"
-
-#Visual summary
 
 #Expanding complexity
 
