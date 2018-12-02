@@ -22,7 +22,7 @@ First, correction of the date/time variable Launched:
 ```{r}
 ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ")# %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
 ```
-##"category"        
+##"category"
 ##"main_category"    
 ##"currency"         
 ##"deadline"        
@@ -36,6 +36,10 @@ ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), s
 ##"usd.pledged""
 ##"usd_pledged_real"
 ##"usd_goal_real"
+prediction: Normal distribution between 100 and 100,000
+```{r}
+ggplot(ks_data, aes(x=usd_goal_real))+ geom_histogram(binwidth=100)
+```
 
 #Expanding complexity
 
