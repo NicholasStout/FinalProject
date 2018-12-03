@@ -127,6 +127,44 @@ ks_data%>%ggplot(aes(currency)) + geom_bar(aes()) + coord_flip()
 This distribution is about what I expected, as most use USD, with the second most being the pound, and a respectable number using the euro, Canadian dollar, and the Australian dollar. Outside of those top 5 currencies, there are not a lot of kickstarters that use any other specific currency.
 
 
+##Backers
+###Dan Tacconi
+prediction: I expect there to be a very large range of backers because of the large variance in popularity and size of projects
+```{r}
+
+summary(ks_data$backers)
+
+ks_data %>% filter(backers <=100, ) %>%
+  ggplot(aes(x=backers))+geom_histogram(binwidth=1)
+
+ks_data %>% filter(backers >100, backers<2000) %>%
+  ggplot(aes(x=backers))+geom_histogram(binwidth=1)
+
+
+
+```
+
+My prediction of a large range was correct as you can see in the summary. I would be interested to see a summary ommiting projects with no backers. The majority of backers seem to be between zero and 100 but they go well over 200,000.
+
+##State
+###Dan Tacconi
+prediction: I expect the majority of projects to be failed or canceled
+```{r}
+ks_data %>% ggplot(aes(x=state))+geom_bar()
+```
+My prediction was correct-most projects failed and a large portion were canceled but more projects succeeded than I expected.
+
+##Goal
+###Dan Tacconi
+prediction: like number of backers, I expect the goal amount to be varied and be a large range of numbers because of the variety of different projects on kickstarter
+```{r}
+summary(ks_data$goal)
+
+ks_data %>% filter(goal<25000) %>%
+  ggplot(aes(x=goal))+geom_histogram()
+```
+
+
 #Expanding complexity
 
 ```{r}
