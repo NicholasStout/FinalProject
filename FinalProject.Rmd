@@ -166,6 +166,36 @@ ks_data %>% filter(goal<25000) %>%
 
 
 #Expanding complexity
+goal vs success
+    by catagory
+##Nic
+```{r}
+ks_data %>% ggplot(aes(x=state, y=goal))+geom_boxplot()
+```
+
+time elapsed vs success
+    by catagory
+##Nic
+```{r}
+
+```
+
+goal vs pledged
+    by catagory
+##Issac
+
+backs vs pledge
+    by country
+##Issac
+
+pledge/backer vs goal
+    by catagory
+##Dan
+
+success vs catagory
+    by country
+##Dan
+
 
 ```{r}
 
