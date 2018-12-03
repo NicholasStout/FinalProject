@@ -25,21 +25,80 @@ ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), s
 ##"category"
 ##"main_category"    
 ##"currency"         
-##"deadline"        
-##"goal"
-##"launch_date"
-##"launch_time"     
-##"pledged"
-##"state"
-##"backers"         
-##"country"
-##"usd.pledged""
-##"usd_pledged_real"
-##"usd_goal_real"
-prediction: Normal distribution between 100 and 100,000
+##deadline       
+##goal
+##launch_date
+##launch_time    
+##pledged
+##state
+##backers        
+##country
+###Nic Stout
+Prediction: I expect most of these to be in the US, by a wide margin
 ```{r}
-ggplot(ks_data, aes(x=usd_goal_real))+ geom_histogram(binwidth=100)
+summary(ks_data$country)
+ks_data %>% ggplot(aes(x=country))+geom_bar()
 ```
+
+my prediction was correct!
+
+##usd.pledged
+###Nic Stout
+Prediction: I expect the median to be around 5000, but the mean to be much closer lower than the goal, maybe around 5000 as well. I'm sure the max is a wildly large number that I can't guess of the top of my head.
+```{r}
+summary(ks_data$usd.pledged)
+```
+
+The graph starts starts high and Interestingly, there were some na values, and I was pretty far off. I was right about the max. I did not take into account that the mean would be skewed by the massive high end of this variable.
+
+```{r}
+ks_data %>% filter(usd.pledged <= 100000) %>% ggplot(aes(x=usd.pledged))+geom_histogram(binwidth=1000)
+```
+
+A vast majority of the amount pledged per kickstarter is less than 1000. This is interesting, as I was expecting it to be more in the few thousands. I am wondering if the amount with none pledged is throwing it off
+```{r}
+ks_data %>% filter(usd.pledged <= 100000 & usd.pledged > 0) %>% ggplot(aes(x=usd.pledged))+geom_histogram(binwidth=1000)
+```
+
+It changed a bit, but still mostly in the < 1000 dollar range. Interesting!
+
+```{r}
+ks_data %>% filter(usd.pledged <= 100000 & usd.pledged > 0) %>% ggplot(aes(x=usd.pledged))+geom_density()
+mode(ks_data$usd.pledged)
+```
+
+This dataset is best describeds as a pareto distribution, as there are far more with a small amount pleged than a large amount. The density graph provided here shows this quite well
+
+##usd_pledged_real
+###Nic Stout
+Prediction: I expect usd.pledged and usd_pleged_real to be very similar, considering it is the same data with two different conversions.
+```{r}
+summary(ks_data$usd_pledged_real)
+```
+
+That was more different than I was expecting! nearly double on most of the data
+```{r}
+ks_data %>% filter(usd.pledged <= 100000 & usd.pledged > 0) %>% ggplot(aes(x=usd.pledged))+geom_histogram(binwidth=1000)
+```
+
+Very similar histograms so I expect the difference is just due to different conversion rates.
+
+##usd_goal_real
+###Nic Stout
+prediction: I expect the data to fall between 100 and 100,000, median around 5000, and mean around 25000. I expect to data to be mostly in the < 100000 range
+```{r}
+summary(ks_data$usd_goal_real)
+```
+```{r}
+ks_data %>% filter(usd_goal_real < 100000) %>% ggplot(aes(x=usd_goal_real))+geom_histogram(binwidth=1000)
+```
+
+Ignoring the very large outliers for the sake of visibity, my prediction was fairly close. a distribution with spikes on round numbers (25000, 50000, etc). I was fairly close on the median, but way off on the mean. I did not realize how many values above 1,000,000 there were.
+
+```{}
+ks_data %>% filter(usd_goal_real < 100000) %>% ggplot(aes(x=usd_goal_real))+geom_density()
+```
+
 
 #Expanding complexity
 
