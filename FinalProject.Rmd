@@ -99,6 +99,33 @@ Ignoring the very large outliers for the sake of visibity, my prediction was fai
 ks_data %>% filter(usd_goal_real < 100000) %>% ggplot(aes(x=usd_goal_real))+geom_density()
 ```
 
+##category
+##Isaac Nellans
+prediction: I expect that the categories will be relatively evenly distributed
+```{r}
+summary(ks_data$category)
+ks_data%>%ggplot(aes(category)) + geom_bar(aes()) + coord_flip()
+```
+There are so many categories, it is hard to distinguish each one on the graph. To resolve this issue, one thing we could do is combine some of them into larger categories, however, there is already a variable in the dataset that does that, main category. This is very convenient, and there is not much more we can do with this graph. We can determine the max and min by using the function summary, which lists the variables in descending order by count. The largest category is Product Design, with the smallest being 3D Printing.
+
+##main category
+##Isaac Nellans
+prediction: The categories should be fairly evenly dustributed, I expect film and music to be the two largest categories
+```{r}
+summary(ks_data$main_category)
+ks_data%>%ggplot(aes(main_category)) + geom_bar(aes()) + theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))
+```
+The barchart shows that film & video and music are indeed the largest two categories, however there is much more fluctuation between the other categories than I expected. It makes sense that film and music are the two highest categories, as it is less time consuming to write and produce a song or film than coming up with something for another category. For example, for the majority of people it would most likely take less time to produce a new song than it would to think of a creative idea for a new restaurant and create a coordinating business plan. It is surprising to me that there are so few dance kickstarters, as dance and music seem to go hand-in-hand.
+
+##currency
+##Isaac Nellans
+prediction: I assume that most of these will be using the US dollar as currency, with quite a few of the remaining kickstarters using the euro.
+```{r}
+summary(ks_data$currency)
+ks_data%>%ggplot(aes(currency)) + geom_bar(aes()) + coord_flip()
+```
+This distribution is about what I expected, as most use USD, with the second most being the pound, and a respectable number using the euro, Canadian dollar, and the Australian dollar. Outside of those top 5 currencies, there are not a lot of kickstarters that use any other specific currency.
+
 
 #Expanding complexity
 
