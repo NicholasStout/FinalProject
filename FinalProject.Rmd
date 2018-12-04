@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
-ks_data = read.csv("ks-projects-201801.csv")
+ks_data = read.csv("C:/Users/Creeky/Desktop/kickstarter.csv")
 ```
 #Authors
 Nicholas Stout, Daniel Tacconi, Issac Nellans
@@ -205,9 +205,21 @@ backs vs pledge
     by country
 ##Issac
 
+    
 pledge/backer vs goal
     by catagory
 ##Dan
+```{r}
+
+as.double(ks_data$backers)
+
+ave_pledge<-ks_data$pledged/ks_data$backers
+
+ks_data %>% ggplot(aes(y=ave_pledge, x=main_category))+geom_boxplot()
+
+```
+
+The average amount of donation is highest for Design kickstarter projects and lowest for 
 
 success vs catagory
     by country
@@ -215,5 +227,9 @@ success vs catagory
 
  %>%
 ```{r}
+ks_data %>% ggplot(aes(x=state))+geom_bar()+facet_grid(cols = vars(main_category=="Art"))
+
+
 
 ```
+
