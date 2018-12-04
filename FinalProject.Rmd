@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 library(lubridate)
-ks_data = read.csv("C:/Users/Creeky/Desktop/kickstarter.csv")
+ks_data = read.csv("ks-projects-201801.csv")
 ```
 #Authors
 Nicholas Stout, Daniel Tacconi, Issac Nellans
