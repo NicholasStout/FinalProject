@@ -15,23 +15,13 @@ ks_data = read.csv("ks-projects-201801.csv")
 Nicholas Stout, Daniel Tacconi, Issac Nellans
 
 #Proposal
-We would like to explore this data to find what effects if a Kickstarter succeeds, looking at amount of time to pledge, the goal amount, and how it is effected by the category.
+We would like to explore this data to find what effects if a Kickstarter succeeds, looking at amount of time to pledge, the goal amount, and how it is effected by the category. 
 
 #Marginal Distributions
 First, correction of the date/time variable Launched:
 ```{r}
 ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ")# %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
 ```
-##"category"
-##"main_category"    
-##"currency"         
-##deadline       
-##goal
-##launch_date
-##launch_time    
-##pledged
-##state
-##backers        
 ##country
 ###Nic Stout
 Prediction: I expect most of these to be in the US, by a wide margin
@@ -171,21 +161,25 @@ goal vs success
 ##Nic
 ```{r}
 
-ks_data %>% group_by(state) %>% summarize(mGoal = mean(goal)) %>% ggplot(aes(x=state, y=mGoal))+geom_bar(stat="identity")
+ks_data %>% group_by(state) %>% summarize(mGoal = mean(usd_goal_real)) %>% ggplot(aes(x=state, y=mGoal))+geom_bar(stat="identity")
 ```
 
 It appears that cancelled failed and currently running kickstarters are roughly equal. Successful kickstarters are very low. I assume due to a lot of low goal projects being funded. The mean of suspened projects, ones that broke the rules or were scams, is very high, and that's funny.
 
 ```{r}
-ks_data %>% ggplot(aes(y=goal, x= state))+geom_boxplot()
+ks_data %>% ggplot(aes(y=usd_goal_real, x= state))+geom_boxplot()
 ```
 Interestingly, the successful kickstarters are much, much less spread out than the rest. This would lead to a lower average goal.
 
 ```{r}
-spread(ks_data, key=state, value = goal) %>% select(c(canceled, failed, live, successful, suspended, undefined)) %>% summary()
+spread(ks_data, key=state, value = usd_goal_real) %>% select(c(canceled, failed, live, successful, suspended, undefined)) %>% summary()
 ```
 
 It seems to have a successful kickstarter, keep it around 10,000, no more than 2,000,000
+
+```{r}
+ks_data %>% filter(state %in% c('canceled', 'failed', 'successful')) %>% group_by(state, main_category) %>% summarise(mGoal=mean(usd_goal_real)) %>%  ggplot(aes(x=main_category, y=mGoal, fill=state))+geom_bar(stat="identity", position='dodge')+coord_flip()
+```
 
 time elapsed vs success
     by category
@@ -197,22 +191,53 @@ ks_data %>% mutate(time_elapsed = ymd(deadline)-ymd(launch_date)) %>% group_by(s
 
 successful kickstarters have slightly shorter deadlines on average, but I don't believe it is enough of a difference to actually be significant.
 
+Success rate per country
+##Nic
+```{r}
+ks_data %>% mutate(state = as.numeric(state=='successful')) %>% group_by(main_category) %>% summarise(success = sum(state), total = n()) %>% ggplot(aes(x=main_category, y=success/total))+geom_bar(stat = 'identity')
+```
+
 goal vs pledged
     by catagory
 ##Issac
 
+```{r}
+ggplot(aes(x = usd_goal_real, y = usd_pledged_real), data=ks_data) + geom_point()
+ggplot(aes(x = log(usd_goal_real), y = log(usd_pledged_real)), data=ks_data) + geom_point()
+```
+The initial graph of goal vs pledged is very jumbled and hard to read. After performing a log transformation on each variable, the graph is a little easier to read. There does not appear to be an obvious shape in the graph. We can tell it is positive, but there is not much of a form to the graph and it is stil hard to determine much of a relationhsip between the two.
+```{r}
+ggplot(aes(x = log(usd_goal_real), y = log(usd_pledged_real)), data=ks_data) + geom_point() + facet_wrap(~ks_data$main_category)
+```
+When we separate this graph into each different category, it is easier to see a relationship in some places. Photography looks to have the strongest relationship. Theater, outside of a few outliers looks to have a somewhat noticeable relationship, along with Food. However, none of these look to be significant. The relationship between goal amount and amount pledged does not look to be beneficial to us. This makes some sense, especially since so many kickstarters were failed or cancelled.
 backs vs pledge
     by country
-##Issac
+##Isaac
+prediction: I expect this distribution to be unimodal and skewed right with a lot of backers only contributing a few dollars, with a realtively small median. I also suspect that there will be some large outliers in the x-direction for those who really like an idea and donate a large amount of money. 
+```{r}
+ks_data$avg = ks_data$usd.pledged/ks_data$backers
+summary(ks_data$avg)
+ks_data%>%ggplot(aes(x=avg))+geom_histogram(binwidth = 5)
+qplot(ks_data$avg, geom="histogram", binwidth = 5, main = "Average Donation per Backer", xlim = c(0,600))
+```
+My prediction was accurate, the graph has a relatively small median and is unimodal and skewed right in shape. There are more large outliers than I expected, and they are included in the first graph. For the second graph, I changed the x-axis cutoff, making the graph easier to view while still accounting for most of the data (1,740 points not shown).
+
+I predict that the distribution between number of backers and amount pledged will be relatively strong and positive.
+```{r}
+ggplot(aes(x = backers, y = usd.pledged), data=ks_data) + geom_point()
+```
+My prediction was correct, in general, the more backers there are, the more money that is donated.
+I expect that this will remain relatively the same for each country.
+```{r}
+ggplot(aes(x = backers, y = usd.pledged, colour = country), data=ks_data) + geom_point()
+```
+My prediction was correct, it does not look like there are any countries that are noticebaly different than the original distribution.
 
     
 pledge/backer vs goal
     by catagory
 ##Dan
 ```{r}
-
-as.double(ks_data$backers)
-
 ave_pledge<-ks_data$pledged/ks_data$backers
 
 ks_data %>% ggplot(aes(y=ave_pledge, x=main_category))+geom_boxplot()
@@ -233,3 +258,5 @@ ks_data %>% ggplot(aes(x=state))+geom_bar()+facet_grid(cols = vars(main_category
 
 ```
 
+#Conclusion
+A Kickstarter is most like to to succeed if it has a goal around 10,000, no more than 2,000,000, and is if it a design project.
