@@ -170,15 +170,32 @@ goal vs success
     by catagory
 ##Nic
 ```{r}
-ks_data %>% ggplot(aes(x=state, y=goal))+geom_boxplot()
+
+ks_data %>% group_by(state) %>% summarize(mGoal = mean(goal)) %>% ggplot(aes(x=state, y=mGoal))+geom_bar(stat="identity")
 ```
+
+It appears that cancelled failed and currently running kickstarters are roughly equal. Successful kickstarters are very low. I assume due to a lot of low goal projects being funded. The mean of suspened projects, ones that broke the rules or were scams, is very high, and that's funny.
+
+```{r}
+ks_data %>% ggplot(aes(y=goal, x= state))+geom_boxplot()
+```
+Interestingly, the successful kickstarters are much, much less spread out than the rest. This would lead to a lower average goal.
+
+```{r}
+spread(ks_data, key=state, value = goal) %>% select(c(canceled, failed, live, successful, suspended, undefined)) %>% summary()
+```
+
+It seems to have a successful kickstarter, keep it around 10,000, no more than 2,000,000
 
 time elapsed vs success
-    by catagory
+    by category
 ##Nic
 ```{r}
-
+ks_data %>% mutate(time_elapsed = ymd(deadline)-ymd(launch_date)) %>% ggplot(aes(x=state, y=as.numeric(time_elapsed)))+geom_boxplot()+ ylim(0,100)
+ks_data %>% mutate(time_elapsed = ymd(deadline)-ymd(launch_date)) %>% group_by(state) %>% summarize(mTime = mean(as.numeric(time_elapsed))) %>% ggplot(aes(x=state, y=mTime))+geom_bar(stat="identity")
 ```
+
+successful kickstarters have slightly shorter deadlines on average, but I don't believe it is enough of a difference to actually be significant.
 
 goal vs pledged
     by catagory
@@ -196,7 +213,7 @@ success vs catagory
     by country
 ##Dan
 
-
+ %>%
 ```{r}
 
 ```
