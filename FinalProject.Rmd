@@ -20,7 +20,7 @@ We would like to explore this data to find what effects if a Kickstarter succeed
 #Marginal Distributions
 First, correction of the date/time variable Launched:
 ```{r}
-ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ")# %>% mutate(launch_date = ymd(launch_date), deadline = ymd(deadline), ID = as.factor(ID))
+ks_data = ks_data %>% separate(launched, into=c("launch_date", "launch_time"), sep = " ")
 ```
 ##country
 ###Nic Stout
@@ -107,16 +107,6 @@ ks_data%>%ggplot(aes(main_category)) + geom_bar(aes()) + theme(axis.text.x = ele
 ```
 The barchart shows that film & video and music are indeed the largest two categories, however there is much more fluctuation between the other categories than I expected. It makes sense that film and music are the two highest categories, as it is less time consuming to write and produce a song or film than coming up with something for another category. For example, for the majority of people it would most likely take less time to produce a new song than it would to think of a creative idea for a new restaurant and create a coordinating business plan. It is surprising to me that there are so few dance kickstarters, as dance and music seem to go hand-in-hand.
 
-##currency
-##Isaac Nellans
-prediction: I assume that most of these will be using the US dollar as currency, with quite a few of the remaining kickstarters using the euro.
-```{r}
-summary(ks_data$currency)
-ks_data%>%ggplot(aes(currency)) + geom_bar(aes()) + coord_flip()
-```
-This distribution is about what I expected, as most use USD, with the second most being the pound, and a respectable number using the euro, Canadian dollar, and the Australian dollar. Outside of those top 5 currencies, there are not a lot of kickstarters that use any other specific currency.
-
-
 ##Backers
 ###Dan Tacconi
 prediction: I expect there to be a very large range of backers because of the large variance in popularity and size of projects
@@ -144,20 +134,9 @@ ks_data %>% ggplot(aes(x=state))+geom_bar()
 ```
 My prediction was correct-most projects failed and a large portion were canceled but more projects succeeded than I expected.
 
-##Goal
-###Dan Tacconi
-prediction: like number of backers, I expect the goal amount to be varied and be a large range of numbers because of the variety of different projects on kickstarter
-```{r}
-summary(ks_data$goal)
-
-ks_data %>% filter(goal<25000) %>%
-  ggplot(aes(x=goal))+geom_histogram()
-```
-
-
 #Expanding complexity
 goal vs success
-    by catagory
+    by category
 ##Nic
 ```{r}
 
@@ -169,36 +148,23 @@ It appears that cancelled failed and currently running kickstarters are roughly 
 ```{r}
 ks_data %>% ggplot(aes(y=usd_goal_real, x= state))+geom_boxplot()
 ```
+
 Interestingly, the successful kickstarters are much, much less spread out than the rest. This would lead to a lower average goal.
 
 ```{r}
 spread(ks_data, key=state, value = usd_goal_real) %>% select(c(canceled, failed, live, successful, suspended, undefined)) %>% summary()
 ```
 
-It seems to have a successful kickstarter, keep it around 10,000, no more than 2,000,000
+It seems to have a successful kickstarter, keep it around 9,533, no more than 2,015,609
 
 ```{r}
-ks_data %>% filter(state %in% c('canceled', 'failed', 'successful')) %>% group_by(state, main_category) %>% summarise(mGoal=mean(usd_goal_real)) %>%  ggplot(aes(x=main_category, y=mGoal, fill=state))+geom_bar(stat="identity", position='dodge')+coord_flip()
+ks_data %>% filter(state %in% c('canceled', 'failed', 'successful')) %>% group_by(state, main_category) %>% summarise(mGoal=mean(usd_goal_real)) %>%  ggplot(aes(x=main_category, y=mGoal, fill=state))+geom_bar(stat="identity", position='stack')+coord_flip()
 ```
 
-time elapsed vs success
-    by category
-##Nic
-```{r}
-ks_data %>% mutate(time_elapsed = ymd(deadline)-ymd(launch_date)) %>% ggplot(aes(x=state, y=as.numeric(time_elapsed)))+geom_boxplot()+ ylim(0,100)
-ks_data %>% mutate(time_elapsed = ymd(deadline)-ymd(launch_date)) %>% group_by(state) %>% summarize(mTime = mean(as.numeric(time_elapsed))) %>% ggplot(aes(x=state, y=mTime))+geom_bar(stat="identity")
-```
-
-successful kickstarters have slightly shorter deadlines on average, but I don't believe it is enough of a difference to actually be significant.
-
-Success rate per country
-##Nic
-```{r}
-ks_data %>% mutate(state = as.numeric(state=='successful')) %>% group_by(main_category) %>% summarise(success = sum(state), total = n()) %>% ggplot(aes(x=main_category, y=success/total))+geom_bar(stat = 'identity')
-```
+With this graph, we see that technology projects have the highest average goal of successful projects of any category, while crafts has the lowest.
 
 goal vs pledged
-    by catagory
+    by category
 ##Issac
 
 ```{r}
@@ -234,29 +200,36 @@ ggplot(aes(x = backers, y = usd.pledged, colour = country), data=ks_data) + geom
 My prediction was correct, it does not look like there are any countries that are noticebaly different than the original distribution.
 
     
-pledge/backer vs goal
-    by catagory
-##Dan
-```{r}
-ave_pledge<-ks_data$pledged/ks_data$backers
+###Average Pledge Per Backer by Category
+###Dan
+```{r cars}
+avg_pledge<-ks_data$pledged/ks_data$backers
 
-ks_data %>% ggplot(aes(y=ave_pledge, x=main_category))+geom_boxplot()
+
+ks_data %>% ggplot(aes(y=avg_pledge, x=main_category))+geom_boxplot()+theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))+ coord_cartesian(ylim=c(-1,125))
+```
+
+We can see from the above graph that the average pledge per backer is highest for Design, Film & Video, and Technology categories and lowest for Crafts. This fits our previous variable explorations which have concluded that the same catgories are generally the most successful. 
+
+###Success Rate Per Country
+###Dan
+```{r pressure, echo=FALSE}
+ks_data %>%ggplot(aes(x=state))+geom_bar()+facet_wrap(country~.)+theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))
 
 ```
 
-The average amount of donation is highest for Design kickstarter projects and lowest for 
+Most of our data is from the US but I was curious to see if we could gather any information about differences across countries when it comes to success or failure of a project. As we can see in the graphs above, the data is disproportionally from the US so it's hard to gather much.
 
-success vs catagory
-    by country
-##Dan
-
- %>%
 ```{r}
-ks_data %>% ggplot(aes(x=state))+geom_bar()+facet_grid(cols = vars(main_category=="Art"))
+ks_data %>% filter (country=="US") %>% ggplot(aes(x=state))+geom_bar()+facet_wrap(country~.)+theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))
 
+ks_data %>% filter (country=="GB") %>% ggplot(aes(x=state))+geom_bar()+facet_wrap(country~.)+theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))
 
+ks_data %>% filter (country=="CA") %>% ggplot(aes(x=state))+geom_bar()+facet_wrap(country~.)+theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))
 
+ks_data %>% filter (country=="AU") %>% ggplot(aes(x=state))+geom_bar()+facet_wrap(country~.)+theme(axis.text.x = element_text(angle=45,vjust=1, hjust=1))
 ```
 
+Even though most of our data is from the US, the distribution of success, failure, and cancelled projects seem to be consistent across countries with no significant differences when looking at other countries. But, it is probably not fair to conclude anything based on the lack of data for countries outside of the US.
 #Conclusion
-A Kickstarter is most like to to succeed if it has a goal around 10,000, no more than 2,000,000, and is if it a design project.
+A Kickstarter is most like to to succeed if it has a goal around 10,000, no more than 2,000,000, and is if it a dance project.
